@@ -58,7 +58,7 @@ namespace TestData.TestDB
         {
             string submClass = "EO";
 
-            if ((submCode == LoginsAPIBroker.SYSTEM_SUBMITTER) || (submCode.ToUpper().StartsWith("FO")))
+            if ((submCode == LoginsAPIBroker.SYSTEM_SUBMITTER) || (submCode.StartsWith("FO", StringComparison.CurrentCultureIgnoreCase)))
                 submClass = "FC";
             else if (submCode[2] == '1')
                 submClass = "ES";

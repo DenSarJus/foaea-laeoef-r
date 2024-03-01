@@ -45,6 +45,10 @@ public class ApplicationsController : FoaeaControllerBase
                                                             [FromServices] IRepositories repositories)
     {
         var appl = await APIBrokerHelper.GetDataFromRequestBody<InterceptionApplicationData>(Request);
+
+        if ((id.CtrlCd != appl.Appl_CtrlCd) || (id.EnfSrv != appl.Appl_EnfSrv_Cd))
+            return BadRequest("route enf.srv+control code does not match body enf.srv+control code");
+
         var currentUser = await UserHelper.ExtractDataFromUser(User, repositories);
         var applicationValidation = new ApplicationValidation(appl, repositories, config, currentUser);
 

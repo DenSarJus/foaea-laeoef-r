@@ -12,13 +12,8 @@ using System.Threading.Tasks;
 
 namespace FOAEA3.Data.DB
 {
-    internal class DBApplication : DBbase, IApplicationRepository
+    internal class DBApplication(IDBToolsAsync mainDB) : DBbase(mainDB), IApplicationRepository
     {
-        public DBApplication(IDBToolsAsync mainDB) : base(mainDB)
-        {
-
-        }
-
         public async Task<ApplicationData> GetApplication(string appl_EnfSrv_Cd, string appl_CtrlCd)
         {
             var parameters = new Dictionary<string, object>
@@ -182,7 +177,7 @@ namespace FOAEA3.Data.DB
             else
             {
                 MainDB.LastError = $"Invalid category code: {appCategory}";
-                data = new();
+                data = [];
             }
 
             if (!string.IsNullOrEmpty(MainDB.LastError))
@@ -390,13 +385,13 @@ namespace FOAEA3.Data.DB
             var errorSameEnfOff = new StringBuilder();
             var errorDiffEnfOff = new StringBuilder();
 
-            if (data.Any())
+            if (data.Count != 0)
             {
                 foreach (ApplicationConfirmedSINData item in data)
                 {
                     string tempString = item.Appl_EnfSrv_Cd.Trim() + "-" + item.Subm_SubmCd.Trim() + "-" + item.Appl_CtrlCd.Trim();
 
-                    if (item.Subm_SubmCd[..2].ToUpper() == subm_SubmCd[..2].ToUpper())
+                    if (item.Subm_SubmCd[..2].Equals(subm_SubmCd[..2], StringComparison.CurrentCultureIgnoreCase))
                         errorSameEnfOff.Append(tempString + "  ");
                     else
                         errorDiffEnfOff.Append(tempString + "  ");

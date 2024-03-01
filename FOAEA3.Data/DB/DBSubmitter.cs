@@ -9,13 +9,8 @@ using System.Threading.Tasks;
 
 namespace FOAEA3.Data.DB
 {
-    internal class DBSubmitter : DBbase, ISubmitterRepository
+    internal class DBSubmitter(IDBToolsAsync mainDB) : DBbase(mainDB), ISubmitterRepository
     {
-        public DBSubmitter(IDBToolsAsync mainDB) : base(mainDB)
-        {
-
-        }
-
         public async Task<List<SubmitterData>> GetSubmitter(string submCode = null,
                                                 string submName = null,
                                                 string enfOffCode = null,

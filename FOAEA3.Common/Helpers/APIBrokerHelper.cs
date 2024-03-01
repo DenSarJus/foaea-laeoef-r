@@ -26,7 +26,7 @@ namespace FOAEA3.Common.Helpers
         public string APIroot
         {
             get => _APIroot;
-            set => _APIroot = value + (value.EndsWith("/", StringComparison.Ordinal) ? "" : "/");
+            set => _APIroot = value + (value.EndsWith('/') ? "" : "/");
         }
 
         public APIBrokerHelper(string apiRoot = "", string currentSubmitter = "", string currentUser = "",

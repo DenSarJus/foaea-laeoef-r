@@ -73,7 +73,7 @@ namespace BackendProcesses.CommandLine
 
             var user = UserHelper.CreateSystemAdminUser();
 
-            if ((option.ToUpper() != "X") && (ValidationHelper.IsValidInteger(option)))
+            if ((!option.Equals("X", StringComparison.CurrentCultureIgnoreCase)) && (ValidationHelper.IsValidInteger(option)))
             {
                 switch (option)
                 {

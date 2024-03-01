@@ -1,6 +1,3 @@
-using FOAEA3.Common.Helpers;
-using FOAEA3.Model.Interfaces;
-using FOAEA3.Model.Interfaces.Repository;
 using FOAEA3.Resources.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -12,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FOAEA3.Admin.Web.Pages.Tools
 {
-    public class VerifyAPIsModel(IRepositories repositories) : PageModel
+    public class VerifyAPIsModel : PageModel
     {
         private const string LOCAL_HOST = "localhost";
         private const string FOAEA_DEV = "FOAEA DEV";
@@ -23,9 +20,6 @@ namespace FOAEA3.Admin.Web.Pages.Tools
         public string Environment { get; set; } = LOCAL_HOST;
         public string[] Environments = [LOCAL_HOST, FOAEA_DEV, FOAEA_UAT, PRODUCTION];
 
-        private readonly IRepositories DB = repositories;
-        private readonly IFoaeaConfigurationHelper Config = new FoaeaConfigurationHelper();
-
         public async Task OnPost()
         {
             if (ModelState.IsValid)
@@ -34,26 +28,15 @@ namespace FOAEA3.Admin.Web.Pages.Tools
                 {
                     string errorMessage = string.Empty;
                     string infoMessage = string.Empty;
-
-                    string server;
-                    switch (Environment)
+                    string server = Environment switch
                     {
-                        case LOCAL_HOST:
-                            server = "localhost";
-                            break;
-                        case FOAEA_DEV:
-                            server = "%TEST_FOAEA_DEV_API_SERVER%".ReplaceVariablesWithEnvironmentValues();
-                            break;
-                        case FOAEA_UAT:
-                            server = "%TEST_FOAEA_UAT_API_SERVER%".ReplaceVariablesWithEnvironmentValues();
-                            break;
-                        case PRODUCTION:
-                            server = "%TEST_FOAEA_Production_API_SERVER%".ReplaceVariablesWithEnvironmentValues();
-                            break;
-                        default:
-                            server = string.Empty;
-                            break;
+                        LOCAL_HOST => "localhost",
+                        FOAEA_DEV => "%TEST_FOAEA_DEV_API_SERVER%".ReplaceVariablesWithEnvironmentValues(),
+                        FOAEA_UAT => "%TEST_FOAEA_UAT_API_SERVER%".ReplaceVariablesWithEnvironmentValues(),
+                        PRODUCTION => "%TEST_FOAEA_Production_API_SERVER%".ReplaceVariablesWithEnvironmentValues(),
+                        _ => string.Empty,
                     };
+                    ;
 
                     if (!string.IsNullOrEmpty(server))
                     {
