@@ -11,6 +11,6 @@ namespace FOAEA3.Model.Interfaces.Broker
         Task CloseNETPTraceEvents();
         Task<ApplicationEventsList> GetRequestedTRCINEvents(string enfSrvCd, string fileCycle);
         Task<ApplicationEventDetailsList> GetActiveTracingEventDetails(string enfSrvCd, string fileCycle);
-        Task<ApplicationEventDetailsList> GetActiveTraceDetailEventsForApplication(string appl_EnfSrvCd, string appl_CtrlCd);
+        Task<ApplicationEventDetailsList> GetTraceEventDetails(string appl_EnfSrvCd, string appl_CtrlCd, bool activeOnly = true);
     }
 }

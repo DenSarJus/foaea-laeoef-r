@@ -58,7 +58,8 @@ public partial class IncomingFederalTracingManager : IncomingFederalManagerBase
 
         if (activeTraceEvent != null)
         {
-            var activeEventDetails = await APIs.TracingEvents.GetActiveTraceDetailEventsForApplication(applEnfSrvCd, applCtrlCd);
+            var activeEventDetails = await APIs.TracingEvents.GetTraceEventDetails(applEnfSrvCd, applCtrlCd,
+                                                                                   activeOnly: true);
 
             if (!activeEventDetails.Any())
             {

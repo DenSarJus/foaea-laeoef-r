@@ -36,17 +36,17 @@ namespace FOAEA3.Common.Brokers
             return new ApplicationEventsList(data);
         }
 
-        public async Task<ApplicationEventDetailsList> GetActiveTraceDetailEventsForApplication(string appl_EnfSrvCd, string appl_CtrlCd)
+        public async Task<ApplicationEventDetailsList> GetTraceEventDetails(string appl_EnfSrvCd, string appl_CtrlCd, bool activeOnly = true)
         {
             string key = ApplKey.MakeKey(appl_EnfSrvCd, appl_CtrlCd);
             string apiCall = $"api/v1/tracingEventDetails/{key}/Trace";
             var data = await ApiHelper.GetData<List<ApplicationEventDetailData>>(apiCall, token: Token);
 
-            data.RemoveAll(m => m.ActvSt_Cd.ToUpper() != "A");
+            if (activeOnly)
+                data.RemoveAll(m => m.ActvSt_Cd.ToUpper() != "A");
 
             return new ApplicationEventDetailsList(data);
         }
-
 
     }
 }

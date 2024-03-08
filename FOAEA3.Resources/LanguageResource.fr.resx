@@ -435,4 +435,7 @@
   <data name="SOURCE_REF_NUMBER" xml:space="preserve">
     <value>Numero réf du ministère payeur</value>
   </data>
+  <data name="TRACE_RESPONSE_CYCLE" xml:space="preserve">
+    <value>Trace Response Cycle</value>
+  </data>
 </root>

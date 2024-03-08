@@ -1,0 +1,42 @@
+﻿@page
+@model FileBroker.Web.Pages.Tools.VerifyTraceResponsesModel
+@{
+}
+
+@{
+    if (ViewData["Message"] != null)
+    {
+        <div class="alert alert-primary">@Html.Raw(ViewData["Message"])</div>
+    }
+    if (ViewData["Error"] != null)
+    {
+        <div class="alert alert-danger">@Html.Raw(ViewData["Error"])</div>
+    }
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <br />
+            <p>Select file name:</p>
+            @foreach (var fileData in Model.IncomingTraceFiles)
+            {
+                <input type="radio" asp-for="FileName" value="@fileData.Name" />
+
+                @fileData.Name
+
+                <br />
+            }
+            <br />
+            <div class="form-group">
+                <label asp-for="TraceResponseCycle" class="control-label"></label>
+                <input asp-for="TraceResponseCycle" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Verify Tracing Responses" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

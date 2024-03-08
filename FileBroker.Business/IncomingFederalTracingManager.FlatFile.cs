@@ -97,7 +97,7 @@ public partial class IncomingFederalTracingManager
         }
     }
 
-    private static (string enfSrvCd, FederalSource fedSource) ConfigureTracingFileDataBasedOnSource(
+    public static (string enfSrvCd, FederalSource fedSource) ConfigureTracingFileDataBasedOnSource(
                                                                        FedTracingFileBase fedTracingData,
                                                                        string fileTableName)
     {

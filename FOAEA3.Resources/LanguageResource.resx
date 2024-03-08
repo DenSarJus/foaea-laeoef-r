@@ -411,6 +411,9 @@
   <data name="TOTAL_XML_VALIDATION_WARNINGS" xml:space="preserve">
     <value>Total XML validation warnings</value>
   </data>
+  <data name="TRACE_RESPONSE_CYCLE" xml:space="preserve">
+    <value>Trace Response Cycle</value>
+  </data>
   <data name="TRACING" xml:space="preserve">
     <value>Tracing</value>
   </data>

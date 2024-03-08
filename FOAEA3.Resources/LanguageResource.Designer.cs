@@ -943,6 +943,15 @@ namespace FOAEA3.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Trace Response Cycle.
+        /// </summary>
+        public static string TRACE_RESPONSE_CYCLE {
+            get {
+                return ResourceManager.GetString("TRACE_RESPONSE_CYCLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tracing.
         /// </summary>
         public static string TRACING {
