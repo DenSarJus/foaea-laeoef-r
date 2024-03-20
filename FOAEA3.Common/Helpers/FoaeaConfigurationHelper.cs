@@ -17,6 +17,7 @@ namespace FOAEA3.Common.Helpers
         public List<string> AutoAccept { get; }
         public List<string> ESDsites { get; }
         public string TaxFormsRootPath { get; }
+        public DateTime L01NoAffidavitCutoffDate { get; }
 
         public FoaeaConfigurationHelper(string[] args = null)
         {
@@ -45,6 +46,9 @@ namespace FOAEA3.Common.Helpers
             TracingDeclaration = configuration.GetSection("Declaration:Tracing").Get<DeclarationData>();
 
             TaxFormsRootPath = configuration["TaxFormsRootPath"];
+            string L01cutoffDateC78 = configuration["L01NoAffidavitCutoffDate"];
+            if (DateTime.TryParse(L01cutoffDateC78, out DateTime thisDateValue))
+                L01NoAffidavitCutoffDate = thisDateValue;            
         }
     }
 }

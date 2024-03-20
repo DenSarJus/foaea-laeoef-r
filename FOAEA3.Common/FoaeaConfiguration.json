@@ -48,5 +48,6 @@
     "Audience": "%FILEBROKER_TOKEN_AUDIENCE%",
     "ExpireMinutes": 480,
     "RefreshTokenExpireMinutes": 600
-  }
+  },
+  "L01NoAffidavitCutoffDate": "2021-10-05"
 }

@@ -54,7 +54,7 @@ namespace FOAEA3.Business.Areas.Application
 
                 // FOAEA users can bypass swearing and go directly to state 10 
                 if (TracingApplication.Subm_Recpt_SubmCd.IsInternalAgentSubmitter() &&
-                    !String.IsNullOrEmpty(TracingApplication.Subm_Affdvt_SubmCd) &&
+                    !string.IsNullOrEmpty(TracingApplication.Subm_Affdvt_SubmCd) &&
                     TracingApplication.Appl_RecvAffdvt_Dte.HasValue)
                 {
                     await SetNewStateTo(ApplicationState.VALID_AFFIDAVIT_NOT_RECEIVED_7);

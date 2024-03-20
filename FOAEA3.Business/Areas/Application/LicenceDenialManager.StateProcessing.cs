@@ -9,14 +9,16 @@ namespace FOAEA3.Business.Areas.Application
         {
             await base.Process_04_SinConfirmed();
 
-            // get Licence Suspension data from LicSusp table
-            // if none are found, then go to state 7 (VALID_AFFIDAVIT_NOT_RECEIVED)
+            await SetNewStateTo(ApplicationState.PENDING_ACCEPTANCE_SWEARING_6); // all new L01 applications are C78
+        }
 
-            if (AffidavitExists())
-                await SetNewStateTo(ApplicationState.PENDING_ACCEPTANCE_SWEARING_6);
-            else
-                await SetNewStateTo(ApplicationState.VALID_AFFIDAVIT_NOT_RECEIVED_7);
+        protected override async Task Process_06_PendingAcceptanceSwearing()
+        {
+            await base.Process_06_PendingAcceptanceSwearing();
 
+            await Validation.AddDuplicateSINWarningEvents();
+
+            await SetNewStateTo(ApplicationState.APPLICATION_ACCEPTED_10); // all new L01 applications are C78
         }
 
         protected override async Task Process_12_PartiallyServiced()
@@ -27,27 +29,22 @@ namespace FOAEA3.Business.Areas.Application
 
             if (licenceResponseData != null)
             {
-
-                short rqstStatCd = licenceResponseData.RqstStat_Cd;
-                string source = licenceResponseData.EnfSrv_Cd;
-
-                switch (rqstStatCd)
+                switch (licenceResponseData.RqstStat_Cd)
                 {
                     case 3:
                         LicenceDenialApplication.LicSusp_AnyLicReinst_Ind = 1;
                         EventManager.AddEvent(EventCode.C50824_A_DEBTOR_LICENCE_HAS_BEEN_SUSPENDED);
                         break;
                     case 5:
-                        EventManager.AddEvent(EventCode.C50827_ASSISTANCE_REQUESTED_TO_CORRECTLY_IDENTIFY_DEBTOR, 
+                        EventManager.AddEvent(EventCode.C50827_ASSISTANCE_REQUESTED_TO_CORRECTLY_IDENTIFY_DEBTOR,
                                               queue: EventQueue.EventAM);
                         break;
                     case 8:
                         LicenceDenialApplication.LicSusp_AnyLicRvkd_Ind = 1;
                         break;
-                    default: 
+                    default:
                         break;
                 }
-
             }
         }
 

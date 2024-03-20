@@ -1,6 +1,7 @@
 ﻿using DBHelper;
 using FOAEA3.Business.Security;
 using FOAEA3.Common.Models;
+using FOAEA3.Data.DB;
 using FOAEA3.Model;
 using FOAEA3.Model.Enums;
 using FOAEA3.Model.Interfaces;
@@ -11,13 +12,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace FOAEA3.Business.Areas.Application
 {
     internal partial class LicenceDenialManager : ApplicationManager
     {
         public LicenceDenialApplicationData LicenceDenialApplication { get; private set; }
+
+        public LicenceDenialValidation LicenceDenialValidation { get; private set; }
 
         private bool AffidavitExists() => !String.IsNullOrEmpty(LicenceDenialApplication.Appl_Crdtr_FrstNme);
 
@@ -28,7 +30,7 @@ namespace FOAEA3.Business.Areas.Application
         }
 
         public LicenceDenialManager(LicenceDenialApplicationData licenceDenial, IRepositories repositories, IFoaeaConfigurationHelper config, ClaimsPrincipal user) :
-            base(licenceDenial, repositories, config, user)
+            base(licenceDenial, repositories, config, user, new LicenceDenialValidation(licenceDenial, repositories, config, null))
         {
             SetupLicenceDenial(licenceDenial);
         }
@@ -40,7 +42,7 @@ namespace FOAEA3.Business.Areas.Application
         }
 
         public LicenceDenialManager(LicenceDenialApplicationData licenceDenial, IRepositories repositories, IFoaeaConfigurationHelper config, FoaeaUser user) :
-            base(licenceDenial, repositories, config, user)
+            base(licenceDenial, repositories, config, user, new LicenceDenialValidation(licenceDenial, repositories, config, null))
         {
             SetupLicenceDenial(licenceDenial);
         }
@@ -59,6 +61,9 @@ namespace FOAEA3.Business.Areas.Application
                         });
 
             StateEngine.ValidStateChange[ApplicationState.SIN_CONFIRMED_4].Add(ApplicationState.VALID_AFFIDAVIT_NOT_RECEIVED_7);
+
+            if (Validation is LicenceDenialValidation)
+                LicenceDenialValidation = (Validation as LicenceDenialValidation);
         }
 
         public async Task<List<LicenceDenialOutgoingProvincialData>> GetProvincialOutgoingData(int maxRecords, string activeState, string recipientCode, bool isXML)

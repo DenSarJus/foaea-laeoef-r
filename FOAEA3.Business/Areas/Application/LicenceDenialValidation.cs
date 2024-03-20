@@ -38,5 +38,10 @@ namespace FOAEA3.Business.Areas.Application
 
             return isValid;
         }
+
+        public bool IsC78()
+        {
+            return LicenceDenialApplication.Appl_Create_Dte > Config.L01NoAffidavitCutoffDate;
+        }
     }
 }

@@ -15,5 +15,6 @@ namespace FOAEA3.Model.Interfaces
         DeclarationData LicenceDenialDeclaration { get; }
         DeclarationData TracingDeclaration { get; }
         string TaxFormsRootPath { get; }
+        DateTime L01NoAffidavitCutoffDate { get; }
     }
 }

@@ -9,7 +9,6 @@ using FOAEA3.Model.Enums;
 using FOAEA3.Resources;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Exchange.WebServices.Data;
 using System.ComponentModel.DataAnnotations;
 
 namespace FileBroker.Web.Pages.Tools
@@ -48,7 +47,7 @@ namespace FileBroker.Web.Pages.Tools
                                     .ToList();
         }
 
-        public async System.Threading.Tasks.Task OnPost()
+        public async Task OnPost()
         {
             if (ModelState.IsValid)
             {
@@ -167,7 +166,7 @@ namespace FileBroker.Web.Pages.Tools
                             SpecialStringCompare(m.TrcRsp_Addr_Ln1, addressInfo.dat_TrcRsp_Addr_Ln1) &&
                             SpecialStringCompare(m.TrcRsp_Addr_CityNme, addressInfo.dat_TrcRsp_Addr_CityNme) &&
                             m.TrcRsp_Addr_PrvCd == addressInfo.dat_TrcRsp_Addr_PrvCd &&
-                            m.TrcRsp_Addr_CtryCd.Trim() == (addressInfo.dat_TrcRsp_Addr_CtryCd.Trim() == "CA" ? string.Empty : addressInfo.dat_TrcRsp_Addr_CtryCd.Trim()) &&
+                            SpecialStringCompare(m.TrcRsp_Addr_CtryCd?.Trim(), addressInfo.dat_TrcRsp_Addr_CtryCd.Trim() == "CA" ? string.Empty : addressInfo.dat_TrcRsp_Addr_CtryCd.Trim()) &&
                             m.TrcRsp_Addr_PCd == addressInfo.dat_TrcRsp_Addr_PCd &&
                             //m.TrcRsp_Addr_LstUpdte?.Date == addressInfo.dat_TrcRsp_Addr_LstUpdte.Date &&
                             m.AddrTyp_Cd.Trim() == "R" &&
@@ -195,13 +194,13 @@ namespace FileBroker.Web.Pages.Tools
                             m.Appl_CtrlCd == addressInfo.dat_Appl_CtrlCd &&
                             m.EnfSrv_Cd.Trim() == fedCode &&
                             m.TrcRsp_Rcpt_Dte.Date == receiptDate?.Date &&
-                            SpecialStringCompare(m.TrcRsp_EmplNme,addressInfo.dat_TrcRcp_EmplNme) &&
-                            SpecialStringCompare(m.TrcRsp_EmplNme1,addressInfo.dat_TrcRcp_EmplNme1) &&
+                            SpecialStringCompare(m.TrcRsp_EmplNme, addressInfo.dat_TrcRcp_EmplNme) &&
+                            SpecialStringCompare(m.TrcRsp_EmplNme1, addressInfo.dat_TrcRcp_EmplNme1) &&
                             SpecialStringCompare(m.TrcRsp_Addr_Ln, addressInfo.dat_TrcRsp_Addr_Ln) &&
                             SpecialStringCompare(m.TrcRsp_Addr_Ln1, addressInfo.dat_TrcRsp_Addr_Ln1) &&
                             SpecialStringCompare(m.TrcRsp_Addr_CityNme, addressInfo.dat_TrcRsp_Addr_CityNme) &&
                             m.TrcRsp_Addr_PrvCd == addressInfo.dat_TrcRsp_Addr_PrvCd &&
-                            m.TrcRsp_Addr_CtryCd.Trim() == (addressInfo.dat_TrcRsp_Addr_CtryCd.Trim() == "CA" ? string.Empty : addressInfo.dat_TrcRsp_Addr_CtryCd.Trim()) &&
+                            SpecialStringCompare(m.TrcRsp_Addr_CtryCd?.Trim(), addressInfo.dat_TrcRsp_Addr_CtryCd.Trim() == "CA" ? string.Empty : addressInfo.dat_TrcRsp_Addr_CtryCd.Trim()) &&
                             m.TrcRsp_Addr_PCd == addressInfo.dat_TrcRsp_Addr_PCd &&
                             //m.TrcRsp_Addr_LstUpdte?.Date == addressInfo.dat_TrcRsp_Addr_LstUpdte.Date &&
                             m.AddrTyp_Cd.Trim() == "E" &&
@@ -220,6 +219,9 @@ namespace FileBroker.Web.Pages.Tools
 
         private static bool SpecialStringCompare(string s1, string s2)
         {
+            if (string.IsNullOrWhiteSpace(s1) && string.IsNullOrWhiteSpace(s2))
+                return true;
+
             if (s1 is null)
                 return false;
 
