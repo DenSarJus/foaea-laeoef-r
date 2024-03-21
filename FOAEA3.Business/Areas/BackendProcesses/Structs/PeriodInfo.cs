@@ -1,7 +1,6 @@
 ﻿using FOAEA3.Business.BackendProcesses.Enums;
-using System;
 
-namespace FOAEA3.Business.BackendProcesses.Structs
+namespace FOAEA3.Business.Areas.BackendProcesses.Structs
 {
     public struct PeriodInfo
     {

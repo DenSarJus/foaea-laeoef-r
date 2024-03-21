@@ -1,79 +1,74 @@
 ﻿using FOAEA3.Business.Areas.Application;
-using FOAEA3.Model.Interfaces;
-using FOAEA3.Model.Interfaces.Repository;
-using System;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
-namespace FOAEA3.Business.Areas.BackendProcesses
+namespace FOAEA3.Business.Areas.BackendProcesses;
+
+public class AutoSwearProcess
 {
-    public class AutoSwearProcess
+    private readonly IFoaeaConfigurationHelper Config;
+    private readonly IRepositories DB;
+    private readonly IRepositories_Finance DBfinance;
+    private readonly ClaimsPrincipal User;
+
+    public AutoSwearProcess(IRepositories repositories, IRepositories_Finance repositories_finance,
+                                    IFoaeaConfigurationHelper config, ClaimsPrincipal user)
     {
-        private readonly IFoaeaConfigurationHelper Config;
-        private readonly IRepositories DB;
-        private readonly IRepositories_Finance DBfinance;
-        private readonly ClaimsPrincipal User;
+        Config = config;
+        DB = repositories;
+        DBfinance = repositories_finance;
+        User = user;
+    }
 
-        public AutoSwearProcess(IRepositories repositories, IRepositories_Finance repositories_finance,
-                                        IFoaeaConfigurationHelper config, ClaimsPrincipal user)
+    public async Task Run()
+    {
+        var prodAudit = DB.ProductionAuditTable;
+
+        await prodAudit.Insert("Auto Swear Process", "Auto Swear Process Started", "O");
+
+        var interceptionManager = new InterceptionManager(DB, DBfinance, Config, User);
+        foreach (string autoSwearEnfSrv in Config.AutoSwear)
         {
-            Config = config;
-            DB = repositories;
-            DBfinance = repositories_finance;
-            User = user;
-        }
+            bool isESDsite = Config.ESDsites.Contains(autoSwearEnfSrv);
 
-        public async Task Run()
-        {
-            var prodAudit = DB.ProductionAuditTable;
-
-            await prodAudit.Insert("Auto Swear Process", "Auto Swear Process Started", "O");
-
-            var interceptionManager = new InterceptionManager(DB, DBfinance, Config, User);
-            foreach (string autoSwearEnfSrv in Config.AutoSwear)
+            var applications = await interceptionManager.GetApplicationsForVariationAutoAccept(autoSwearEnfSrv);
+            foreach (var appl in applications)
             {
-                bool isESDsite = Config.ESDsites.Contains(autoSwearEnfSrv);
+                bool exGratia = false;
 
-                var applications = await interceptionManager.GetApplicationsForVariationAutoAccept(autoSwearEnfSrv);
-                foreach (var appl in applications)
+                var manager = new InterceptionManager(appl, DB, DBfinance, Config, User);
+                if (await manager.IsSinBlocked() || await manager.IsRefNumberBlocked())
                 {
-                    bool exGratia = false;
+                    exGratia = true;
+                }
 
-                    var manager = new InterceptionManager(appl, DB, DBfinance, Config, User);
-                    if (await manager.IsSinBlocked() || await manager.IsRefNumberBlocked())
-                    {
-                        exGratia = true;
-                    }
+                manager.AcceptedWithin30Days = true;
+                manager.GarnisheeSummonsReceiptDate = await DB.InterceptionTable.GetGarnisheeSummonsReceiptDate(
+                                                                            appl.Appl_EnfSrv_Cd, appl.Appl_CtrlCd, isESDsite);
 
-                    manager.AcceptedWithin30Days = true;
-                    manager.GarnisheeSummonsReceiptDate = await DB.InterceptionTable.GetGarnisheeSummonsReceiptDate(
-                                                                                appl.Appl_EnfSrv_Cd, appl.Appl_CtrlCd, isESDsite);
+                var dateDiff = DateTime.Now - manager.GarnisheeSummonsReceiptDate.Value;
+                if (dateDiff.Days > 30)
+                {
+                    manager.AcceptedWithin30Days = false;
+                    await manager.RejectInterception();
+                }
+                else
+                {
+                    string enfSrv = manager.InterceptionApplication.Appl_EnfSrv_Cd;
+                    string ctrlCd = manager.InterceptionApplication.Appl_CtrlCd;
+                    var overrideAppl = await DB.InterceptionTable.GetAutoAcceptGarnisheeOverrideData(enfSrv, ctrlCd);
+                    DateTime supportingDocDate;
 
-                    var dateDiff = DateTime.Now - manager.GarnisheeSummonsReceiptDate.Value;
-                    if (dateDiff.Days > 30)
-                    {
-                        manager.AcceptedWithin30Days = false;
-                        await manager.RejectInterception();
-                    }
+                    if ((overrideAppl is not null) && (overrideAppl.Appl_CtrlCd == ctrlCd))
+                        supportingDocDate = overrideAppl.Appl_RecvAffdvt_Dte ?? DateTime.Now;
                     else
-                    {
-                        string enfSrv = manager.InterceptionApplication.Appl_EnfSrv_Cd;
-                        string ctrlCd = manager.InterceptionApplication.Appl_CtrlCd;
-                        var overrideAppl = await DB.InterceptionTable.GetAutoAcceptGarnisheeOverrideData(enfSrv, ctrlCd);
-                        DateTime supportingDocDate;
+                        supportingDocDate = DateTime.Now;
 
-                        if ((overrideAppl is not null) && (overrideAppl.Appl_CtrlCd == ctrlCd))
-                            supportingDocDate = overrideAppl.Appl_RecvAffdvt_Dte ?? DateTime.Now;
-                        else
-                            supportingDocDate = DateTime.Now;
-
-                        if (!exGratia)
-                            await manager.AcceptInterception(supportingDocDate);
-                    }
+                    if (!exGratia)
+                        await manager.AcceptInterception(supportingDocDate);
                 }
             }
-
-            await prodAudit.Insert("Auto Swear Process", "Auto Swear Process Completed", "O");
         }
+
+        await prodAudit.Insert("Auto Swear Process", "Auto Swear Process Completed", "O");
     }
 }

@@ -1,56 +1,52 @@
 ﻿using FOAEA3.Business.Areas.Application;
-using FOAEA3.Model.Interfaces;
-using FOAEA3.Model.Interfaces.Repository;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
-namespace FOAEA3.Business.Areas.BackendProcesses
+namespace FOAEA3.Business.Areas.BackendProcesses;
+
+internal class AutoAcceptProcess
 {
-    internal class AutoAcceptProcess
+    private readonly IFoaeaConfigurationHelper Config;
+    private readonly IRepositories DB;
+    private readonly IRepositories_Finance DBfinance;
+    private readonly ClaimsPrincipal User;
+
+    public AutoAcceptProcess(IRepositories repositories, IRepositories_Finance repositories_finance,
+                                    IFoaeaConfigurationHelper config, ClaimsPrincipal user)
     {
-        private readonly IFoaeaConfigurationHelper Config;
-        private readonly IRepositories DB;
-        private readonly IRepositories_Finance DBfinance;
-        private readonly ClaimsPrincipal User;
+        Config = config;
+        DB = repositories;
+        DBfinance = repositories_finance;
+        User = user;
+    }
 
-        public AutoAcceptProcess(IRepositories repositories, IRepositories_Finance repositories_finance,
-                                        IFoaeaConfigurationHelper config, ClaimsPrincipal user)
+    public async Task Run()
+    {
+        var prodAudit = DB.ProductionAuditTable;
+
+        await prodAudit.Insert("Auto Accept Process", $"Auto Accept Process Started", "O");
+
+        var interceptionManager = new InterceptionManager(DB, DBfinance, Config, User);
+
+        foreach (string enfService in Config.AutoAccept)
+            await interceptionManager.AutoAcceptVariations(enfService);
+
+        await prodAudit.Insert("Auto Accept Process", $"Auto Accept Process Completed", "O");
+    }
+
+    public async Task Run(string enfService)
+    {
+        var prodAudit = DB.ProductionAuditTable;
+
+        await prodAudit.Insert("Auto Accept Process", $"Auto Accept Process for {enfService} Started", "O");
+
+        if (Config.AutoAccept.Contains(enfService.ToUpper()))
         {
-            Config = config;
-            DB = repositories;
-            DBfinance = repositories_finance;
-            User = user;
-        }
-
-        public async Task Run()
-        {
-            var prodAudit = DB.ProductionAuditTable;
-
-            await prodAudit.Insert("Auto Accept Process", $"Auto Accept Process Started", "O");
-
             var interceptionManager = new InterceptionManager(DB, DBfinance, Config, User);
-
-            foreach (string enfService in Config.AutoAccept)
-                await interceptionManager.AutoAcceptVariations(enfService);
-
-            await prodAudit.Insert("Auto Accept Process", $"Auto Accept Process Completed", "O");
+            await interceptionManager.AutoAcceptVariations(enfService);
         }
+        else
+            await prodAudit.Insert("Auto Accept Process", $"Error: {enfService} not in valid auto accept list", "O");
 
-        public async Task Run(string enfService)
-        {
-            var prodAudit = DB.ProductionAuditTable;
-
-            await prodAudit.Insert("Auto Accept Process", $"Auto Accept Process for {enfService} Started", "O");
-
-            if (Config.AutoAccept.Contains(enfService.ToUpper()))
-            {
-                var interceptionManager = new InterceptionManager(DB, DBfinance, Config, User);
-                await interceptionManager.AutoAcceptVariations(enfService);
-            }
-            else
-                await prodAudit.Insert("Auto Accept Process", $"Error: {enfService} not in valid auto accept list", "O");
-
-            await prodAudit.Insert("Auto Accept Process", $"Auto Accept Process for {enfService} Completed", "O");
-        }
+        await prodAudit.Insert("Auto Accept Process", $"Auto Accept Process for {enfService} Completed", "O");
     }
 }

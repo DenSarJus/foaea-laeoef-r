@@ -1,21 +1,16 @@
-﻿using FOAEA3.Model;
-using FOAEA3.Model.Interfaces.Repository;
-using System.Threading.Tasks;
+﻿namespace FOAEA3.Business.Areas.Administration;
 
-namespace FOAEA3.Business.Areas.Administration
+public class SubjectManager
 {
-    public class SubjectManager
+    private IRepositories DB { get; }
+    public SubjectManager(IRepositories repositories)
     {
-        private IRepositories DB { get; }
-        public SubjectManager(IRepositories repositories)
-        {
-            DB = repositories;
-        }
-
-        public async Task<SubjectData> GetSubjectByConfirmationCode(string confirmationCode)
-        {
-            return await DB.SubjectTable.GetSubjectByConfirmationCode(confirmationCode);
-        }
-
+        DB = repositories;
     }
+
+    public async Task<SubjectData> GetSubjectByConfirmationCode(string confirmationCode)
+    {
+        return await DB.SubjectTable.GetSubjectByConfirmationCode(confirmationCode);
+    }
+
 }

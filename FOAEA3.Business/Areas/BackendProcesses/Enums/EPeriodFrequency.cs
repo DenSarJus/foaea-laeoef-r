@@ -1,10 +1,9 @@
-﻿namespace FOAEA3.Business.BackendProcesses.Enums
+﻿namespace FOAEA3.Business.BackendProcesses.Enums;
+
+public enum EPeriodFrequency
 {
-    public enum EPeriodFrequency
-    {
-        None,
-        Periodic,
-        FixedAmount,
-        Both
-    };
-}
+    None,
+    Periodic,
+    FixedAmount,
+    Both
+};

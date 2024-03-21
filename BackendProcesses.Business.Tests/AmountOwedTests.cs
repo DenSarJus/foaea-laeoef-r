@@ -7,7 +7,7 @@ using Xunit.Abstractions;
 using System.Linq;
 using FOAEA3.Resources.Helpers;
 using System.Threading.Tasks;
-using FOAEA3.Business.BackendProcesses;
+using FOAEA3.Business.Areas.BackendProcesses;
 
 namespace BackendProcesses.Business.Tests
 {

@@ -1,4 +1,4 @@
-﻿using FOAEA3.Helpers;
+﻿using FOAEA3.Business.Security;
 using FOAEA3.Model.Constants;
 using FOAEA3.Model.Interfaces.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

@@ -1,12 +1,4 @@
-﻿using DBHelper;
-using FOAEA3.Model;
-using FOAEA3.Model.Base;
-using FOAEA3.Model.Enums;
-using FOAEA3.Model.Interfaces.Repository;
-using FOAEA3.Resources.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using FOAEA3.Model.Base;
 
 namespace FOAEA3.Business.Areas.Application;
 
@@ -152,7 +144,7 @@ internal class ApplicationSINManager
     {
         string result = string.Empty;
 
-        switch(action.ToLower())
+        switch (action.ToLower())
         {
             case "insert":
                 await DB.CraSinPendingTable.Insert(oldSIN, newSIN);
