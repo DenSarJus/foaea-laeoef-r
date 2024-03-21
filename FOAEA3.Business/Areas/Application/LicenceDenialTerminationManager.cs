@@ -61,6 +61,16 @@ internal partial class LicenceDenialTerminationManager : ApplicationManager
         if (!IsValidCategory("L03"))
             return false;
 
+        var lastAddressInfo = new LicenceDenialApplicationData
+        {
+            LicSusp_Dbtr_LastAddr_Ln = LicenceDenialTerminationApplication.Appl_Dbtr_Addr_Ln,
+            LicSusp_Dbtr_LastAddr_Ln1 = LicenceDenialTerminationApplication.Appl_Dbtr_Addr_Ln1,
+            LicSusp_Dbtr_LastAddr_CityNme = LicenceDenialTerminationApplication.Appl_Dbtr_Addr_CityNme,
+            LicSusp_Dbtr_LastAddr_PrvCd = LicenceDenialTerminationApplication.Appl_Dbtr_Addr_PrvCd,
+            LicSusp_Dbtr_LastAddr_CtryCd = LicenceDenialTerminationApplication.Appl_Dbtr_Addr_CtryCd,
+            LicSusp_Dbtr_LastAddr_PCd = LicenceDenialTerminationApplication.Appl_Dbtr_Addr_PCd
+        };
+
         // bool success = base.CreateApplication();
         var originalL01 = await GetOriginalLicenceDenialApplication(controlCodeForL01, requestDate);
 
@@ -80,19 +90,12 @@ internal partial class LicenceDenialTerminationManager : ApplicationManager
         }
         else if (LicenceDenialTerminationApplication.AppLiSt_Cd != ApplicationState.INVALID_APPLICATION_1)
         {
-            originalL01.LicSusp_Dbtr_LastAddr_Ln = LicenceDenialTerminationApplication.LicSusp_Dbtr_LastAddr_Ln;
-            originalL01.LicSusp_Dbtr_LastAddr_Ln1 = LicenceDenialTerminationApplication.LicSusp_Dbtr_LastAddr_Ln1;
-            originalL01.LicSusp_Dbtr_LastAddr_CityNme = LicenceDenialTerminationApplication.LicSusp_Dbtr_LastAddr_CityNme;
-            originalL01.LicSusp_Dbtr_LastAddr_PrvCd = LicenceDenialTerminationApplication.LicSusp_Dbtr_LastAddr_PrvCd;
-            originalL01.LicSusp_Dbtr_LastAddr_CtryCd = LicenceDenialTerminationApplication.LicSusp_Dbtr_LastAddr_CtryCd;
-            originalL01.LicSusp_Dbtr_LastAddr_PCd = LicenceDenialTerminationApplication.LicSusp_Dbtr_LastAddr_PCd;
-
             bool isValid;
             string reasonText;
 
-            string cityName = LicenceDenialTerminationApplication.LicSusp_Dbtr_LastAddr_CityNme;
-            string provinceCode = LicenceDenialTerminationApplication.LicSusp_Dbtr_LastAddr_PrvCd;
-            string postalCode = LicenceDenialTerminationApplication.LicSusp_Dbtr_LastAddr_PCd;
+            string cityName = lastAddressInfo.LicSusp_Dbtr_LastAddr_CityNme;
+            string provinceCode = lastAddressInfo.LicSusp_Dbtr_LastAddr_PrvCd;
+            string postalCode = lastAddressInfo.LicSusp_Dbtr_LastAddr_PCd;
             string countryCode = LicenceDenialTerminationApplication.LicSusp_Dbtr_Brth_CtryCd;
 
             (isValid, reasonText) = await Validation.IsValidPostalCode(postalCode, provinceCode, cityName, countryCode);
@@ -103,6 +106,15 @@ internal partial class LicenceDenialTerminationManager : ApplicationManager
             originalL01.LicSusp_LiStCd = 14;
 
             await originalLicenceDenialManager.CancelApplication();
+
+            originalL01.LicSusp_Dbtr_LastAddr_Ln = lastAddressInfo.LicSusp_Dbtr_LastAddr_Ln;
+            originalL01.LicSusp_Dbtr_LastAddr_Ln1 = lastAddressInfo.LicSusp_Dbtr_LastAddr_Ln1;
+            originalL01.LicSusp_Dbtr_LastAddr_CityNme = lastAddressInfo.LicSusp_Dbtr_LastAddr_CityNme;
+            originalL01.LicSusp_Dbtr_LastAddr_PrvCd = lastAddressInfo.LicSusp_Dbtr_LastAddr_PrvCd;
+            originalL01.LicSusp_Dbtr_LastAddr_CtryCd = lastAddressInfo.LicSusp_Dbtr_LastAddr_CtryCd;
+            originalL01.LicSusp_Dbtr_LastAddr_PCd = lastAddressInfo.LicSusp_Dbtr_LastAddr_PCd;
+
+            await DB.LicenceDenialTable.UpdateLicenceDenialData(originalL01);
         }
 
         string msg = string.Empty;

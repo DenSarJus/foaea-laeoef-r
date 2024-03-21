@@ -213,8 +213,6 @@ internal partial class LicenceDenialManager : ApplicationManager
 
         MakeUpperCase();
         await UpdateApplicationNoValidation();
-
-        await DB.LicenceDenialTable.UpdateLicenceDenialData(LicenceDenialApplication);
     }
 
     public override async Task UpdateApplication()
