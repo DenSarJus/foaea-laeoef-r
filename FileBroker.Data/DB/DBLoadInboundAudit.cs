@@ -3,56 +3,55 @@ using FileBroker.Model.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FileBroker.Data.DB
+namespace FileBroker.Data.DB;
+
+public class DBLoadInboundAudit : ILoadInboundAuditRepository
 {
-    public class DBLoadInboundAudit : ILoadInboundAuditRepository
+    private IDBToolsAsync MainDB { get; }
+
+    public DBLoadInboundAudit(IDBToolsAsync mainDB)
     {
-        private IDBToolsAsync MainDB { get; }
+        MainDB = mainDB;
+    }
 
-        public DBLoadInboundAudit(IDBToolsAsync mainDB)
+    public async Task AddRow(string applEnfSrvCd, string applCtrlCd, string sourceRefNumber, string inboundFileName)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            MainDB = mainDB;
-        }
+            {"Appl_EnfSrv_Cd", applEnfSrvCd },
+            {"Appl_CtrlCd", applCtrlCd },
+            {"Appl_Source_RfrNr", sourceRefNumber },
+            {"InboundFilename", inboundFileName }
+        };
 
-        public async Task AddRow(string applEnfSrvCd, string applCtrlCd, string sourceRefNumber, string inboundFileName)
+        await MainDB.ExecProcAsync("LoadInboundAuditInsert", parameters);
+    }
+
+    public async Task<bool> RowExists(string applEnfSrvCd, string applCtrlCd, string sourceRefNumber, string inboundFileName)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            var parameters = new Dictionary<string, object>
-            {
-                {"Appl_EnfSrv_Cd", applEnfSrvCd },
-                {"Appl_CtrlCd", applCtrlCd },
-                {"Appl_Source_RfrNr", sourceRefNumber },
-                {"InboundFilename", inboundFileName }
-            };
+            {"Appl_EnfSrv_Cd", applEnfSrvCd },
+            {"Appl_CtrlCd", applCtrlCd },
+            {"Appl_Source_RfrNr", sourceRefNumber },
+            {"InboundFilename", inboundFileName }
+        };
 
-            await MainDB.ExecProcAsync("LoadInboundAuditInsert", parameters);
-        }
+        int count = await MainDB.GetDataFromStoredProcViaReturnParameterAsync<int>("LoadInboundAuditSearch", parameters, "found");
 
-        public async Task<bool> RowExists(string applEnfSrvCd, string applCtrlCd, string sourceRefNumber, string inboundFileName)
+        return (count > 0);
+    }
+
+    public async Task MarkRowAsCompleted(string applEnfSrvCd, string applCtrlCd, string sourceRefNumber, string inboundFileName)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            var parameters = new Dictionary<string, object>
-            {
-                {"Appl_EnfSrv_Cd", applEnfSrvCd },
-                {"Appl_CtrlCd", applCtrlCd },
-                {"Appl_Source_RfrNr", sourceRefNumber },
-                {"InboundFilename", inboundFileName }
-            };
+            {"Appl_EnfSrv_Cd", applEnfSrvCd },
+            {"Appl_CtrlCd", applCtrlCd },
+            {"Appl_Source_RfrNr", sourceRefNumber },
+            {"InboundFilename", inboundFileName }
+        };
 
-            int count = await MainDB.GetDataFromStoredProcViaReturnParameterAsync<int>("LoadInboundAuditSearch", parameters, "found");
-
-            return (count > 0);
-        }
-
-        public async Task MarkRowAsCompleted(string applEnfSrvCd, string applCtrlCd, string sourceRefNumber, string inboundFileName)
-        {
-            var parameters = new Dictionary<string, object>
-            {
-                {"Appl_EnfSrv_Cd", applEnfSrvCd },
-                {"Appl_CtrlCd", applCtrlCd },
-                {"Appl_Source_RfrNr", sourceRefNumber },
-                {"InboundFilename", inboundFileName }
-            };
-
-            await MainDB.ExecProcAsync("LoadInboundAuditUpdate", parameters);
-        }
+        await MainDB.ExecProcAsync("LoadInboundAuditUpdate", parameters);
     }
 }

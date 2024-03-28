@@ -30,7 +30,7 @@ public static class OutgoingFileCreatorMEP
         var fileBrokerDB = new DBToolsAsync(config.FileBrokerConnection);
 
         bool generateTracingFiles = true;
-        bool generateLicencingFiles = false; // TODO: fix when support for licencing is added
+        bool generateLicencingFiles = true; 
         bool generateStatsFiles = false; // TODO: fix when support for stats file is added
 
         if (args.Length > 0)
@@ -62,8 +62,8 @@ public static class OutgoingFileCreatorMEP
         if (generateTracingFiles)
             await CreateOutgoingProvincialFiles(db, "TRCAPPOUT", new OutgoingProvincialTracingManager(foaeaApis, db, config));
 
-        //if (generateLicencingFiles)
-        //    await CreateOutgoingProvincialFiles(db, "LICAPPOUT", new OutgoingProvincialLicenceDenialManager(foaeaApis, db, config));
+        if (generateLicencingFiles)
+            await CreateOutgoingProvincialFiles(db, "LICAPPOUT", new OutgoingProvincialLicenceDenialManager(foaeaApis, db, config));
 
         //if (generateStatsFiles)
         //    await CreateOutgoingProvincialFiles(db, "STATAPPOUT", new OutgoingProvincialStatusManager(foaeaApis, db, config));

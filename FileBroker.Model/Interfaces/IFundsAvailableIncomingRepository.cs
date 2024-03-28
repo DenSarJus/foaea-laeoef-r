@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FileBroker.Model.Interfaces
+namespace FileBroker.Model.Interfaces;
+
+public interface IFundsAvailableIncomingRepository
 {
-    public interface IFundsAvailableIncomingRepository
-    {
-        Task<List<FundsAvailableIncomingTrainingData>> GetFundsAvailableIncomingTrainingData(string batchId);
-        Task UpdateFundsAvailableIncomingTraining(List<FundsAvailableIncomingTrainingData> data);
-    }
+    Task<List<FundsAvailableIncomingTrainingData>> GetFundsAvailableIncomingTrainingData(string batchId);
+    Task UpdateFundsAvailableIncomingTraining(List<FundsAvailableIncomingTrainingData> data);
 }

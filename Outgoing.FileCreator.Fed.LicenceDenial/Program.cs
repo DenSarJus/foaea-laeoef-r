@@ -1,12 +1,11 @@
 ﻿using System.Threading.Tasks;
 
-namespace Outgoing.FileCreator.Fed.LicenceDenial
+namespace Outgoing.FileCreator.Fed.LicenceDenial;
+
+class Program
 {
-    class Program
+    static async Task Main(string[] args)
     {
-        static async Task Main(string[] args)
-        {
-            await OutgoingFileCreatorFedLicenceDenial.Run(args);
-        }
+        await OutgoingFileCreatorFedLicenceDenial.Run(args);
     }
 }

@@ -67,9 +67,9 @@ namespace FileBroker.Business.Helpers
                 //    errors = await ProcessIncomingInterception(jsonText, fileNameNoXmlExtension, errors);
                 //    break;
 
-                //case 'L':
-                //    errors = await ProcessIncomingLicencing(jsonText, fileNameNoXmlExtension, errors);
-                //    break;
+                case 'L':
+                    errors = await ProcessIncomingLicencing(jsonText, fileNameNoXmlExtension, errors);
+                    break;
 
                 default:
                     errors.Add($"Unknown file type: {fileType}");
@@ -92,7 +92,7 @@ namespace FileBroker.Business.Helpers
         {
             errors = JsonHelper.Validate<MEPTracingFileData>(sourceTracingJsonData, out List<UnknownTag> unknownTags);
 
-            if (errors.Any())
+            if (errors.Count != 0)
                 return errors;
 
             var tracingManager = new IncomingProvincialTracingManager(DB, FoaeaApis, fileName, Config);
@@ -184,7 +184,7 @@ namespace FileBroker.Business.Helpers
             {
                 errors = JsonHelper.Validate<MEPLicenceDenialFileDataSingle>(sourceLicenceDenialJsonData, out unknownTags);
 
-                if (errors.Any())
+                if (errors.Count != 0)
                     return errors;
             }
 

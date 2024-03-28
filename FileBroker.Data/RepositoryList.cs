@@ -4,6 +4,7 @@ namespace FileBroker.Data
 {
     public struct RepositoryList
     {
+        public IApiTransferLogRepository ApiTransferLog { get; set; }
         public IFlatFileSpecificationRepository FlatFileSpecs { get; set; }
         public IFileTableRepository FileTable { get; set; }
         public ISettingsRepository Settings { get; set; }

@@ -102,7 +102,7 @@ public class OutgoingProvincialLicenceDenialManager : IOutgoingFileManager
     {
         var result = new StringBuilder();
 
-        result.AppendLine("<?xml version='1.0' encoding='utf-8'?>");
+        result.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         result.AppendLine("<ProvincialOutboundXMLFileLicenceResponseCode85>");
 
         result.AppendLine(GenerateHeaderLine(newCycle));
@@ -119,35 +119,35 @@ public class OutgoingProvincialLicenceDenialManager : IOutgoingFileManager
 
     private static string GenerateHeaderLine(string newCycle)
     {
-        string xmlCreationDateTime = DateTime.Now.ToString("o");
+        string xmlCreationDateTime = DateTime.Now.Date.ToString("yyyy-MM-ddTHH:mm:sszzz");
 
         var output = new StringBuilder();
-        output.AppendLine($"<Header>");
-        output.AppendLine($"  <Record_Type>01</Record_Type>");
-        output.AppendLine($"  <Cycle_Number>{newCycle}</Cycle_Number>");
-        output.AppendLine($"  <File_Creation_Date>{xmlCreationDateTime}</File_Creation_Date>");
-        output.Append($"</Header>");
+        output.AppendLine($"  <Header>");
+        output.AppendLine($"    <Record_Type>01</Record_Type>");
+        output.AppendLine($"    <Cycle_Number>{newCycle}</Cycle_Number>");
+        output.AppendLine($"    <File_Creation_Date>{xmlCreationDateTime}</File_Creation_Date>");
+        output.Append($"  </Header>");
 
         return output.ToString();
     }
 
     private static string GenerateDetailLine(LicenceDenialOutgoingProvincialData item)
     {
-        string xmlReceiptDate = item.LicRsp_Rcpt_Dte.ToString("o");
+        string xmlReceiptDate = item.LicRsp_Rcpt_Dte.ToString("yyyy-MM-ddTHH:mm:sszzz");
 
         var output = new StringBuilder();
-        output.AppendLine($"<Licence_Response_Code>");
-        output.AppendLine(XmlHelper.GenerateXMLTagWithValue("Record_Type_Code", "80"));
-        output.AppendLine(XmlHelper.GenerateXMLTagWithValue("Enforcement_Service_Code", item.Appl_EnfSrv_Cd));
-        output.AppendLine(XmlHelper.GenerateXMLTagWithValue("Issuing_Submitter_Code", item.Subm_SubmCd));
-        output.AppendLine(XmlHelper.GenerateXMLTagWithValue("Appl_Control_Code", item.Appl_CtrlCd));
-        output.AppendLine(XmlHelper.GenerateXMLTagWithValue("Source_Reference_Number", item.Appl_Source_RfrNr));
-        output.AppendLine(XmlHelper.GenerateXMLTagWithValue("Recipient_Submitter_Code", item.Subm_Recpt_SubmCd));
-        output.AppendLine(XmlHelper.GenerateXMLTagWithValue("Receipt_Date", xmlReceiptDate));
-        output.AppendLine(XmlHelper.GenerateXMLTagWithValue("Sequence_Number", item.LicRsp_SeqNr));
-        output.AppendLine(XmlHelper.GenerateXMLTagWithValue("Licence_Status_Code", item.RqstStat_Cd.ToString()));
-        output.AppendLine(XmlHelper.GenerateXMLTagWithValue("Licence_Source_Service_Code", item.EnfSrv_Cd));
-        output.Append($"</Licence_Response_Code>");
+        output.AppendLine($"  <Licence_Response_Code>");
+        output.AppendLine(" " + XmlHelper.GenerateXMLTagWithValue("Record_Type_Code", "80"));
+        output.AppendLine(" " + XmlHelper.GenerateXMLTagWithValue("Enforcement_Service_Code", item.Appl_EnfSrv_Cd));
+        output.AppendLine(" " + XmlHelper.GenerateXMLTagWithValue("Issuing_Submitter_Code", item.Subm_SubmCd));
+        output.AppendLine(" " + XmlHelper.GenerateXMLTagWithValue("Appl_Control_Code", item.Appl_CtrlCd));
+        output.AppendLine(" " + XmlHelper.GenerateXMLTagWithValue("Source_Reference_Number", item.Appl_Source_RfrNr));
+        output.AppendLine(" " + XmlHelper.GenerateXMLTagWithValue("Recipient_Submitter_Code", item.Subm_Recpt_SubmCd));
+        output.AppendLine(" " + XmlHelper.GenerateXMLTagWithValue("Receipt_Date", xmlReceiptDate));
+        output.AppendLine(" " + XmlHelper.GenerateXMLTagWithValue("Sequence_Number", item.LicRsp_SeqNr));
+        output.AppendLine(" " + XmlHelper.GenerateXMLTagWithValue("Licence_Status_Code", item.RqstStat_Cd.ToString()));
+        output.AppendLine(" " + XmlHelper.GenerateXMLTagWithValue("Licence_Source_Service_Code", item.EnfSrv_Cd));
+        output.Append($"  </Licence_Response_Code>");
 
         return output.ToString();
     }
@@ -155,10 +155,10 @@ public class OutgoingProvincialLicenceDenialManager : IOutgoingFileManager
     private static string GenerateFooterLine(int rowCount)
     {
         var output = new StringBuilder();
-        output.AppendLine($"<Trailer>");
-        output.AppendLine($"  <Record_Type>99</Record_Type>");
-        output.AppendLine($"  <Detail_Record_Count>{rowCount:000000}</Detail_Record_Count>");
-        output.Append($"</Trailer>");
+        output.AppendLine($"  <Trailer>");
+        output.AppendLine($"    <Record_Type>99</Record_Type>");
+        output.AppendLine($"    <Detail_Record_Count>{rowCount:000000}</Detail_Record_Count>");
+        output.Append($"  </Trailer>");
 
         return output.ToString();
     }

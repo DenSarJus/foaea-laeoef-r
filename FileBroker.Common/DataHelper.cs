@@ -14,6 +14,7 @@ namespace FileBroker.Common
         {
             var fileBrokerDB = new DBToolsAsync(fileBrokerConnectionString);
 
+            services.AddScoped<IApiTransferLogRepository>(m => ActivatorUtilities.CreateInstance<DBApiTransferLog>(m, fileBrokerDB));
             services.AddScoped<IFlatFileSpecificationRepository>(m => ActivatorUtilities.CreateInstance<DBFlatFileSpecification>(m, fileBrokerDB));
             services.AddScoped<IFileTableRepository>(m => ActivatorUtilities.CreateInstance<DBFileTable>(m, fileBrokerDB));
             services.AddScoped<ISettingsRepository>(m => ActivatorUtilities.CreateInstance<DBSettings>(m, fileBrokerDB));
@@ -36,6 +37,7 @@ namespace FileBroker.Common
         {
             return new RepositoryList
             {
+                ApiTransferLog = new DBApiTransferLog(fileBrokerDB),
                 FlatFileSpecs = new DBFlatFileSpecification(fileBrokerDB),
                 FileTable = new DBFileTable(fileBrokerDB),
                 Settings = new DBSettings(fileBrokerDB),

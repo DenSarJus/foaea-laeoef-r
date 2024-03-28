@@ -1,12 +1,11 @@
 ﻿using System.Threading.Tasks;
 
-namespace Outgoing.FileCreator.Fed.Tracing
+namespace Outgoing.FileCreator.Fed.Tracing;
+
+class Program
 {
-    class Program
+    static async Task Main(string[] args)
     {
-        static async Task Main(string[] args)
-        {
-            await OutgoingFileCreatorFedTracing.Run(args);
-        }
+        await OutgoingFileCreatorFedTracing.Run(args);
     }
 }

@@ -4,27 +4,26 @@ using FileBroker.Model.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FileBroker.Data.DB
+namespace FileBroker.Data.DB;
+
+public class DBTranslation : ITranslationRepository
 {
-    public class DBTranslation : ITranslationRepository
+    private IDBToolsAsync MainDB { get; }
+
+    public DBTranslation(IDBToolsAsync mainDB)
     {
-        private IDBToolsAsync MainDB { get; }
+        MainDB = mainDB;
+    }
 
-        public DBTranslation(IDBToolsAsync mainDB)
-        {
-            MainDB = mainDB;
-        }
+    public async Task<List<TranslationData>> GetTranslations()
+    {
+        return await MainDB.GetDataFromStoredProcAsync<TranslationData>("", FillTranslationDataFromReader);
+    }
 
-        public async Task<List<TranslationData>> GetTranslations()
-        {
-            return await MainDB.GetDataFromStoredProcAsync<TranslationData>("", FillTranslationDataFromReader);
-        }
-
-        private void FillTranslationDataFromReader(IDBHelperReader rdr, TranslationData data)
-        {
-            data.TranslationId = (int)rdr["TranslationId"];
-            data.EnglishText = rdr["EnglishText"] as string;
-            data.FrenchText = rdr["FrenchText"] as string;
-        }
+    private void FillTranslationDataFromReader(IDBHelperReader rdr, TranslationData data)
+    {
+        data.TranslationId = (int)rdr["TranslationId"];
+        data.EnglishText = rdr["EnglishText"] as string;
+        data.FrenchText = rdr["FrenchText"] as string;
     }
 }

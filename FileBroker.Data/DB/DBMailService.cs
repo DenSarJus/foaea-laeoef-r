@@ -4,62 +4,60 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace FileBroker.Data.DB
+namespace FileBroker.Data.DB;
+
+public class DBMailService : IMailServiceRepository
 {
+    private IDBToolsAsync MainDB { get; }
 
-    public class DBMailService : IMailServiceRepository
+    public DBMailService(IDBToolsAsync mainDB)
     {
-        private IDBToolsAsync MainDB { get; }
+        MainDB = mainDB;
+    }
 
-        public DBMailService(IDBToolsAsync mainDB)
+    public async Task<string> SendEmail(string subject, string recipients, string body, string attachmentPath = null)
+    {
+     
+        var parameters = new Dictionary<string, object>
         {
-            MainDB = mainDB;
-        }
+            {"subject", subject },
+            {"body", body },
+            {"recipients", recipients }
+        };
 
-        public async Task<string> SendEmail(string subject, string recipients, string body, string attachmentPath = null)
+        if (!string.IsNullOrEmpty(attachmentPath))
         {
-         
-            var parameters = new Dictionary<string, object>
-            {
-                {"subject", subject },
-                {"body", body },
-                {"recipients", recipients }
-            };
-
-            if (!string.IsNullOrEmpty(attachmentPath))
-            {
-                int attachmentId = await UploadAttachmentToDatabase(attachmentPath);
-
-                if (!string.IsNullOrEmpty(MainDB.LastError))
-                    return MainDB.LastError;
-
-                parameters.Add("attachmentId", attachmentId);
-            }
-
-            await MainDB.ExecProcAsync("SendHtmlMailMessageWithAttachment", parameters);
+            int attachmentId = await UploadAttachmentToDatabase(attachmentPath);
 
             if (!string.IsNullOrEmpty(MainDB.LastError))
                 return MainDB.LastError;
 
-            return "";
+            parameters.Add("attachmentId", attachmentId);
         }
 
-        private async Task<int> UploadAttachmentToDatabase(string attachmentPath)
+        await MainDB.ExecProcAsync("SendHtmlMailMessageWithAttachment", parameters);
+
+        if (!string.IsNullOrEmpty(MainDB.LastError))
+            return MainDB.LastError;
+
+        return "";
+    }
+
+    private async Task<int> UploadAttachmentToDatabase(string attachmentPath)
+    {
+        string attachmentFileName = Path.GetFileName(attachmentPath);
+        string attachmentContent = File.ReadAllText(attachmentPath);
+
+        var parameters = new Dictionary<string, object>
         {
-            string attachmentFileName = Path.GetFileName(attachmentPath);
-            string attachmentContent = File.ReadAllText(attachmentPath);
+            {"AttachmentFileName", attachmentFileName},
+            {"AttachmentContent", attachmentContent }
+        };
 
-            var parameters = new Dictionary<string, object>
-            {
-                {"AttachmentFileName", attachmentFileName},
-                {"AttachmentContent", attachmentContent }
-            };
+        decimal returnValue = await MainDB.GetDataFromProcSingleValueAsync<decimal>("EmailAttachment_Insert", parameters);
 
-            decimal returnValue = await MainDB.GetDataFromProcSingleValueAsync<decimal>("EmailAttachment_Insert", parameters);
-
-            return (int)returnValue;
-
-        }
+        return (int)returnValue;
 
     }
+
 }

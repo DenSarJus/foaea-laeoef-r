@@ -1,12 +1,11 @@
 ﻿using System.Threading.Tasks;
 
-namespace Outgoing.FileCreator.MEP
+namespace Outgoing.FileCreator.MEP;
+
+class Program
 {
-    class Program
+    static async Task Main(string[] args)
     {
-        static async Task Main(string[] args)
-        {
-            await OutgoingFileCreatorMEP.Run(args);
-        }
+        await OutgoingFileCreatorMEP.Run(args);
     }
 }

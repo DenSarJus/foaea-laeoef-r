@@ -54,11 +54,11 @@ public class BringForwardEventProcess
                         await tracingManager.ProcessBringForwards(bfEvent);
                         break;
 
-                    //case "L01":
-                    //    var licencingManager = new LicenceDenialManager(DB, config, User);
-                    //    await licencingManager.LoadApplication(bfEvent.Appl_EnfSrv_Cd, bfEvent.Appl_CtrlCd);
-                    //    await licencingManager.ProcessBringForwards(bfEvent);
-                    //    break;
+                    case "L01":
+                        var licencingManager = new LicenceDenialManager(DB, config, User);
+                        await licencingManager.LoadApplication(bfEvent.Appl_EnfSrv_Cd, bfEvent.Appl_CtrlCd);
+                        await licencingManager.ProcessBringForwards(bfEvent);
+                        break;
 
                     default:
                         break;

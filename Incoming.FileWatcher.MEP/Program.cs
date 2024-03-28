@@ -210,7 +210,7 @@ internal class Program
             fileTableData.AddRange(await fileTable.GetFileTableDataForCategory("TRCAPPIN"));
             //fileTableData.AddRange(await fileTable.GetFileTableDataForCategory("INTAPPIN"));
             //fileTableData.AddRange(await fileTable.GetFileTableDataForCategory("ESD"));
-            //fileTableData.AddRange(await fileTable.GetFileTableDataForCategory("LICAPPIN"));
+            fileTableData.AddRange(await fileTable.GetFileTableDataForCategory("LICAPPIN"));
         }
 
         fileTableData = fileTableData.Where(f => f.Active.HasValue && f.Active.Value).ToList();

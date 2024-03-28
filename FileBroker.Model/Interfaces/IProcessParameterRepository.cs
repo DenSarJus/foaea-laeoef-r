@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 
-namespace FileBroker.Model.Interfaces
+namespace FileBroker.Model.Interfaces;
+
+public interface IProcessParameterRepository
 {
-    public interface IProcessParameterRepository
-    {
-        Task<string> GetValueForParameter(int processId, string parameter);
-        Task<ProcessCodeData> GetProcessCodes(int processId);
-    }
+    Task<string> GetValueForParameter(int processId, string parameter);
+    Task<ProcessCodeData> GetProcessCodes(int processId);
 }

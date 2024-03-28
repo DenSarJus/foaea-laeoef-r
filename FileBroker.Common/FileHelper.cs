@@ -188,6 +188,26 @@ namespace FileBroker.Common
             return result;
         }
 
+        public static string FormatDBDateString(string dateString)
+        {
+            if (!string.IsNullOrEmpty(dateString.Trim()) && (dateString.Length == 8))
+            {
+                try
+                {
+                    int day = int.Parse(dateString[0..2]);
+                    int month = int.Parse(dateString[2..4]);
+                    int year = int.Parse(dateString[4..8]);
+                    var dateTime = new DateTime(year, month, day);
+                    return dateTime.ToString("yyyy-MM-ddTHH:mm:sszzz");
+                }
+                catch
+                {
+                    return string.Empty;
+                }
+            }
+            return string.Empty;
+        }
+
         public static async Task<IActionResult> ExtractAndSaveRequestBodyToFile(string fileName, IFileTableRepository fileTable, 
                                                                                 HttpRequest Request)
         {

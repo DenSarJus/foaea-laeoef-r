@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Incoming.FileWatcher.Fed.Tracing;
+namespace Incoming.FileWatcher.Fed.LicenceDenial;
 
 class Program
 {

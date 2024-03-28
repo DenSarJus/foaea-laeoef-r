@@ -4,7 +4,6 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>warnings</Nullable>
-		<Version>1.0.0-alpha</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -23,7 +22,7 @@
 		<ProjectReference Include="..\FOAEA3.EmailTools\FOAEA3.EmailTools.csproj" />
 		<ProjectReference Include="..\FOAEA3.Model\FOAEA3.Model.csproj" />
 		<ProjectReference Include="..\FOAEA3.Resources\FOAEA3.Resources.csproj" />
-	</ItemGroup>
+  </ItemGroup>
 
 	<ItemGroup>
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
